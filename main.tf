@@ -1,5 +1,5 @@
 resource "aws_cloudtrail" "trail" {
-  name           = "ctl${tile(var.project)}${title(var.environment)}"
+  name           = "trail${replace(title(var.project), " ", "")}${title(var.environment)}"
   s3_bucket_name = "${var.s3_bucket_name}"
 
   enable_logging                = true
@@ -11,6 +11,8 @@ resource "aws_cloudtrail" "trail" {
     Name        = "${var.project}"
     Environment = "${var.environment}"
   }
+
+  depends_on = ["aws_s3_bucket.trail"]
 }
 
 resource "aws_s3_bucket" "trail" {
@@ -18,6 +20,8 @@ resource "aws_s3_bucket" "trail" {
 
   bucket = "${var.s3_bucket_name}"
   region = "${var.region}"
+
+  force_destroy = true
 
   lifecycle_rule {
     enabled = true
@@ -40,6 +44,7 @@ resource "aws_s3_bucket_policy" "trail" {
 # See: https://docs.aws.amazon.com/awscloudtrail/latest/userguide/create-s3-bucket-policy-for-cloudtrail.html
 #
 data "aws_iam_policy_document" "cloudtrail_log_access" {
+  count = "${var.create_s3_bucket ? 1 : 0}"
   statement {
     sid       = "AWSCloudTrailAclCheck"
     actions   = ["s3:GetBucketAcl"]
@@ -68,7 +73,7 @@ data "aws_iam_policy_document" "cloudtrail_log_access" {
     condition {
       test     = "StringEquals"
       variable = "s3:x-amz-acl"
-      value    = "bucket-owner-full-control"
+      values    = ["bucket-owner-full-control"]
     }
   }
 }
