@@ -31,6 +31,17 @@ module "cloudtrail" {
 - `s3_bucket_name` - Name of the S3 bucket to store logs in (required)
 - `s3_bucket_lifecycle_expiration` - How many days to store logs before they will be
    deleted (default: `90`)
+- `enable_logging` - Specifies whether to enable logging for the trail (default: `true`)
+- `include_global_service_events` - Specifies whether the trail is publishing events
+  from global services such as IAM (default: `true`)
+- `is_multi_region_trail` - Specifies whether the trail is created in the current region or
+  in all regions (default: `false`)
+- `enable_log_file_validation` - Specifies whether log file integrity validation
+  is enabled (default: `false`)
+- `is_organization_trail` - Specifies whether the trail is an AWS Organizations trail,
+  which must be created in the organization master account (default: `false`)
+- `s3_key_prefix` - Specifies the S3 key prefix that precedes the name of the bucket
+   you have designated for log file delivery (Optional)
 - `project` - Project name, used for tagging and naming the trail (default:
   `Unknown`)
 - `environment` - Name of the environment this trail is targeting (default:

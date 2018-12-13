@@ -1,11 +1,13 @@
 resource "aws_cloudtrail" "trail" {
   name           = "trail${replace(title(var.project), " ", "")}${title(var.environment)}"
   s3_bucket_name = "${var.s3_bucket_name}"
+  s3_key_prefix  = "${var.s3_key_prefix}"
 
-  enable_logging                = true
-  include_global_service_events = true
-  is_multi_region_trail         = false
-  enable_log_file_validation    = false
+  enable_logging                = "${var.enable_logging}"
+  include_global_service_events = "${var.include_global_service_events}"
+  is_multi_region_trail         = "${var.is_multi_region_trail}"
+  enable_log_file_validation    = "${var.enable_log_file_validation}"
+  is_organization_trail         = "${var.is_organization_trail}"
 
   tags {
     Name        = "${var.project}"
@@ -20,8 +22,6 @@ resource "aws_s3_bucket" "trail" {
 
   bucket = "${var.s3_bucket_name}"
   region = "${var.region}"
-
-  force_destroy = true
 
   lifecycle_rule {
     enabled = true
@@ -45,6 +45,7 @@ resource "aws_s3_bucket_policy" "trail" {
 #
 data "aws_iam_policy_document" "cloudtrail_log_access" {
   count = "${var.create_s3_bucket ? 1 : 0}"
+
   statement {
     sid       = "AWSCloudTrailAclCheck"
     actions   = ["s3:GetBucketAcl"]
@@ -60,10 +61,7 @@ data "aws_iam_policy_document" "cloudtrail_log_access" {
     sid     = "AWSCloudTrailWrite"
     actions = ["s3:PutObject"]
 
-    # The AWS example policy has a more detailed path. We don't necessarily know
-    # what will be in the bucket, so just apply the rule to all subdirectories
-    # of the bucket..
-    resources = ["${aws_s3_bucket.trail.arn}/*"]
+    resources = ["${var.s3_key_prefix != "" ? ${aws_s3_bucket.trail.arn}/${var.s3_key_prefix}/* : ${aws_s3_bucket.trail.arn}/*}"]
 
     principals {
       type        = "Service"
@@ -73,7 +71,7 @@ data "aws_iam_policy_document" "cloudtrail_log_access" {
     condition {
       test     = "StringEquals"
       variable = "s3:x-amz-acl"
-      values    = ["bucket-owner-full-control"]
+      values   = ["bucket-owner-full-control"]
     }
   }
 }
