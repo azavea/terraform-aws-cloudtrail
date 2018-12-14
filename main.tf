@@ -24,10 +24,19 @@ resource "aws_s3_bucket" "trail" {
   region = "${var.region}"
 
   lifecycle_rule {
-    enabled = true
+    enabled = "${var.enable_s3_bucket_transition}"
+
+    transition {
+      days          = "${var.s3_bucket_days_to_transition}"
+      storage_class = "${var.s3_bucket_transition_storage_class}"
+    }
+  }
+
+  lifecycle_rule {
+    enabled = "${var.enable_s3_bucket_expiration}"
 
     expiration {
-      days = "${var.s3_bucket_lifecycle_expiration}"
+      days = "${var.s3_bucket_days_to_expiration}"
     }
   }
 }
@@ -61,7 +70,7 @@ data "aws_iam_policy_document" "cloudtrail_log_access" {
     sid     = "AWSCloudTrailWrite"
     actions = ["s3:PutObject"]
 
-    resources = ["${var.s3_key_prefix != "" ? ${aws_s3_bucket.trail.arn}/${var.s3_key_prefix}/* : ${aws_s3_bucket.trail.arn}/*}"]
+    resources = ["${var.s3_key_prefix != "" ? format("%s/%s/*", aws_s3_bucket.trail.arn, var.s3_key_prefix) : format("%s/*", aws_s3_bucket.trail.arn)}"]
 
     principals {
       type        = "Service"

@@ -22,9 +22,29 @@ variable "s3_bucket_name" {
   description = "Name of the S3 bucket to store logs in (required)."
 }
 
-variable "s3_bucket_lifecycle_expiration" {
+variable "enable_s3_bucket_expiration" {
+  default     = "false"
+  description = "Specifies whether to enable an expiration policy for the log storage bucket."
+}
+
+variable "s3_bucket_days_to_expiration" {
   default     = "90"
-  description = "How many days to store logs before they will be deleted."
+  description = "How many days to store logs before they will be deleted. Only applies if `enable_s3_bucket_expiration` is true."
+}
+
+variable "enable_s3_bucket_transition" {
+  default     = "true"
+  description = "Specifies whether to enable a storage class transition for the S3 bucket."
+}
+
+variable "s3_bucket_days_to_transition" {
+  default     = "90"
+  description = "How many days to store logs before they will be transitioned to a new storage class. Only applies if `enable_s3_bucket_transition` is true."
+}
+
+variable "s3_bucket_transition_storage_class" {
+  default     = "ONEZONE_IA"
+  description = "Specifies the S3 storage class to which logs will transition for archival. Only applies if `enable_s3_bucket_transition` is true."
 }
 
 variable "enable_logging" {

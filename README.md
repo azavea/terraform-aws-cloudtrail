@@ -29,8 +29,12 @@ module "cloudtrail" {
 - `create_s3_bucket` - Whether or not to create a new S3 bucket. When `false`,
    you must provide a valid bucket to `s3_bucket_name` (default: `true`)
 - `s3_bucket_name` - Name of the S3 bucket to store logs in (required)
-- `s3_bucket_lifecycle_expiration` - How many days to store logs before they will be
-   deleted (default: `90`)
+- `enable_s3_bucket_expiration` - Specifies whether to enable an expiration policy for the log stora   ge bucket (default: `false`)
+- `s3_bucket_days_to_expiration` - How many days to store logs before they will be
+   deleted. Only applies if `enable_s3_bucket_expiration` is true (default: `90`)
+- `enable_s3_bucket_transition` - Specifies whether to enable a storage class transition for the S3 bucket (default: `true`)
+- `s3_bucket_days_to_transition` - How many days to store logs before they will be transitioned to a  new storage class. Only applies if `enable_s3_bucket_transition` is true (default: `90`)
+- `s3_bucket_transition_storage_class` - Specifies the S3 storage class to which logs will transiti    on for archival. Only applies if `enable_s3_bucket_transition` is true (default: `ONEZONE_IA`)
 - `enable_logging` - Specifies whether to enable logging for the trail (default: `true`)
 - `include_global_service_events` - Specifies whether the trail is publishing events
   from global services such as IAM (default: `true`)
@@ -52,3 +56,6 @@ module "cloudtrail" {
 - `id` - The name of the trail.
 - `home_region` - The region in which the trail was created.
 - `arn` - The Amazon Resource Name of the trail.
+- `bucket_id` - The name of the log bucket, if one was created -- otherwise, an empty string.
+- `bucket_arn` - The Amazon Resource Name of the log bucket, if one was created --
+  otherwise, an empty string."
