@@ -12,10 +12,24 @@ automatically.
 module "cloudtrail" {
   source = "github.com/azavea/terraform-aws-cloudtrail?ref=develop"
 
-  region                         = "us-east-1"
-  create_s3_bucket               = true
-  s3_bucket_name                 = "mysite-logs"
-  s3_bucket_lifecycle_expiration = 90
+  region           = "us-east-1"
+  create_s3_bucket = true
+  s3_bucket_name   = "mysite-logs"
+  s3_key_prefix    = "cloudtrail"
+
+  enable_s3_bucket_expiration  = false
+  s3_bucket_days_to_expiration = 90
+
+  enable_s3_bucket_transition        = true
+  s3_bucket_days_to_transition       = 90
+  s3_bucket_transition_storage_class = "ONEZONE_IA"
+
+  enable_logging             = true
+  enable_log_file_validation = false
+
+  include_global_service_events = true
+  is_multi_region_trail         = false
+  is_organization_trail         = false
 
   project     = "My Site"
   environment = "Production"
@@ -29,6 +43,8 @@ module "cloudtrail" {
 - `create_s3_bucket` - Whether or not to create a new S3 bucket. When `false`,
    you must provide a valid bucket to `s3_bucket_name` (default: `true`)
 - `s3_bucket_name` - Name of the S3 bucket to store logs in (required)
+- `s3_key_prefix` - Specifies the S3 key prefix that precedes the name of the bucket
+   you have designated for log file delivery (Optional)
 - `enable_s3_bucket_expiration` - Specifies whether to enable an expiration policy for the log stora   ge bucket (default: `false`)
 - `s3_bucket_days_to_expiration` - How many days to store logs before they will be
    deleted. Only applies if `enable_s3_bucket_expiration` is true (default: `90`)
@@ -44,8 +60,6 @@ module "cloudtrail" {
   is enabled (default: `false`)
 - `is_organization_trail` - Specifies whether the trail is an AWS Organizations trail,
   which must be created in the organization master account (default: `false`)
-- `s3_key_prefix` - Specifies the S3 key prefix that precedes the name of the bucket
-   you have designated for log file delivery (Optional)
 - `project` - Project name, used for tagging and naming the trail (default:
   `Unknown`)
 - `environment` - Name of the environment this trail is targeting (default:
