@@ -72,4 +72,4 @@ module "cloudtrail" {
 - `arn` - The Amazon Resource Name of the trail.
 - `bucket_id` - The name of the log bucket, if one was created -- otherwise, an empty string.
 - `bucket_arn` - The Amazon Resource Name of the log bucket, if one was created --
-  otherwise, an empty string."
+  otherwise, an empty string.
