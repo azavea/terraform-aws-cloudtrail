@@ -10,7 +10,7 @@ automatically.
 
 ```hcl
 module "cloudtrail" {
-  source = "github.com/azavea/terraform-aws-cloudtrail?ref=develop"
+  source = "github.com/azavea/terraform-aws-cloudtrail?ref=0.1.0"
 
   region           = "us-east-1"
   create_s3_bucket = true
