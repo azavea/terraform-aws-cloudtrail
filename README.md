@@ -1,5 +1,7 @@
 # terraform-aws-cloudtrail
 
+[![CircleCI](https://circleci.com/gh/azavea/terraform-aws-cloudtrail.svg?style=svg)](https://circleci.com/gh/azavea/terraform-aws-cloudtrail)
+
 A Terraform module to create an Amazon Web Services (AWS) CloudTrail trail.
 
 ## Usage
